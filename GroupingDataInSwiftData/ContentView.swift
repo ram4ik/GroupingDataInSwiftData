@@ -20,10 +20,38 @@ class Movie {
     }
 }
 
+struct Genre: Identifiable {
+    let id = UUID()
+    let name: String
+    let movies: [Movie]
+}
+
+struct Post: Identifiable {
+    let id = UUID()
+    let name: String
+    let comments: [Comment]
+}
+
+struct Comment: Identifiable {
+    let id = UUID()
+    let subject: String
+}
+
 struct ContentView: View {
     
     @Environment(\.modelContext) private var context
     @Query private var movies: [Movie]
+    
+    let posts: [Post] = [
+        Post(name: "Post 1", comments: [
+            Comment(subject: "Comment 1"),
+            Comment(subject: "Comment 2")]
+        ),
+        Post(name: "Post 2", comments: [
+            Comment(subject: "Comment 1"),
+            Comment(subject: "Comment 2")]
+        )
+    ]
     
     @State private var name: String = ""
     @State private var genre: String = ""
@@ -35,6 +63,14 @@ struct ContentView: View {
             Button("Save") {
                 let movie = Movie(name: name, genre: genre)
                 context.insert(movie)
+            }
+            
+            ForEach(posts) { post in
+                Text(post.name)
+                ForEach(post.comments) { comment in
+                    Text(comment.subject)
+                        .padding([.leading], 20)
+                }
             }
         }
     }
