@@ -47,11 +47,24 @@ struct ContentView: View {
     
     var genres: [Genre] {
         
+        // Option 1
+        /*
         let availableGenres = Array(Set(movies.map { $0.genre }))
         
         return availableGenres.map { genre in
             let moviesByGenre = movies.filter { $0.genre == genre }
             return Genre(name: genre, movies: moviesByGenre)
+        } */
+        
+        // Option2
+        var genreDictionary = [String: [Movie]]()
+        
+        for movie in movies {
+            genreDictionary[movie.genre, default: []].append(movie)
+        }
+        
+        return genreDictionary.map { (genreName, movies) in
+            Genre(name: genreName, movies: movies)
         }
     }
     
