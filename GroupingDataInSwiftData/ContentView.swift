@@ -42,19 +42,18 @@ struct ContentView: View {
     @Environment(\.modelContext) private var context
     @Query private var movies: [Movie]
     
-    let posts: [Post] = [
-        Post(name: "Post 1", comments: [
-            Comment(subject: "Comment 1"),
-            Comment(subject: "Comment 2")]
-        ),
-        Post(name: "Post 2", comments: [
-            Comment(subject: "Comment 1"),
-            Comment(subject: "Comment 2")]
-        )
-    ]
-    
     @State private var name: String = ""
     @State private var genre: String = ""
+    
+    var genres: [Genre] {
+        
+        let availableGenres = Array(Set(movies.map { $0.genre }))
+        
+        return availableGenres.map { genre in
+            let moviesByGenre = movies.filter { $0.genre == genre }
+            return Genre(name: genre, movies: moviesByGenre)
+        }
+    }
     
     var body: some View {
         Form {
@@ -65,10 +64,10 @@ struct ContentView: View {
                 context.insert(movie)
             }
             
-            ForEach(posts) { post in
-                Text(post.name)
-                ForEach(post.comments) { comment in
-                    Text(comment.subject)
+            ForEach(genres) { genre in
+                Text(genre.name)
+                ForEach(genre.movies) { movie in
+                    Text(movie.name)
                         .padding([.leading], 20)
                 }
             }
